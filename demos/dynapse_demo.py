@@ -41,7 +41,7 @@ ydim = 64
 sizeW = 1024
 timeMul = 10e-6
 
-window = app.Window(sizeW, sizeW, color=(0, 0, 0, 1))
+window = app.Window(sizeW, sizeW, color=(0, 0, 0, 1), title="DYNAPSE Demo")
 points = PointCollection("agg", color="local", size="local")
 
 lock = threading.Lock()
