@@ -63,12 +63,15 @@ fragment = """
     }
 """
 
-window = app.Window(width=1024, height=1024, aspect=1)
+window = app.Window(width=1024, height=1024, aspect=1, title="RoShamBo")
 
 img_array = (np.random.uniform(
     0, 1, (128, 128, 3))*250).astype(np.uint8)
 
 symbol_list = ["paper", "scissors", "rock", "no sign"]
+robot_list = ["scissors", "rock", "paper", "no sign"]
+break_time = 10
+break_idx = 1
 
 
 @window.event
@@ -82,7 +85,7 @@ def on_close():
 
 @window.event
 def on_draw(dt):
-    global data_stream, device, event_list
+    global data_stream, device, event_list, break_idx, break_time
     window.clear()
 
     if data_stream is False:
@@ -110,13 +113,19 @@ def on_draw(dt):
                 (img_on-img_off), -clip_value, clip_value)
         else:
             integrated_img = (img_on-img_off)
-        predict_array = resize(
-            integrated_img, (64, 64))[np.newaxis, :, :, np.newaxis]
+        if break_idx % break_time == 0:
+            predict_array = resize(
+                integrated_img, (64, 64))[np.newaxis, :, :, np.newaxis]
+            prediction = model.predict(predict_array)
+            print ("\033[93mYou:\033[0m", symbol_list[np.argmax(prediction)],
+                   "\t",
+                   "\033[92mMe:\033[0m", robot_list[np.argmax(prediction)])
+            break_idx = 1
+        else:
+            break_idx += 1
 
         img_array = ((integrated_img+clip_value)/float(
             clip_value*2)*255).astype(np.uint8)
-        prediction = model.predict(predict_array)
-        print ("Prediction: ", symbol_list[np.argmax(prediction)])
         img_array = img_array[..., np.newaxis].repeat(3, axis=2)
     else:
         img_array = (np.random.uniform(
