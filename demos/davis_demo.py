@@ -40,7 +40,7 @@ data_stream = False
 
 lock = threading.Lock()
 
-clip_value = 3
+clip_value = 16
 histrange = [(0, v) for v in (128, 128)]
 
 vertex = """
