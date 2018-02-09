@@ -39,7 +39,7 @@ device.start_data_stream()
 xdim = 64
 ydim = 64
 sizeW = 1024
-timeMul = 1e-6
+timeMul = 100e-6
 
 window = app.Window(sizeW, sizeW, color=(0, 0, 0, 1), title="DYNAPSE Demo")
 points = PointCollection("agg", color="local", size="local")
