@@ -70,7 +70,7 @@ img_array = (np.random.uniform(
 
 symbol_list = ["paper", "scissors", "rock", "no sign"]
 robot_list = ["scissors", "rock", "paper", "no sign"]
-break_time = 10
+break_time = 15
 break_idx = 1
 
 
