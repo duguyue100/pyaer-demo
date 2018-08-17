@@ -63,41 +63,41 @@ while True:
         data = get_event(device)
 
         if data is not None:
-            (pol_events, num_pol_event,
-             special_events, num_special_event,
-             frames_ts, frames, imu_events,
-             num_imu_event) = data
-
-            print ("Number of events:", num_pol_event, "Number of Frames:",
-                   frames.shape, "Exposure:",
-                   device.get_config(
-                       libcaer.DAVIS_CONFIG_APS,
-                       libcaer.DAVIS_CONFIG_APS_EXPOSURE))
-
-            img = None
-            if num_pol_event != 0:
-                pol_on = (pol_events[:, 3] == 1)
-                pol_off = np.logical_not(pol_on)
-                img_on, _, _ = np.histogram2d(
-                        pol_events[pol_on, 2], pol_events[pol_on, 1],
-                        bins=(180, 240), range=histrange)
-                img_off, _, _ = np.histogram2d(
-                        pol_events[pol_off, 2], pol_events[pol_off, 1],
-                        bins=(180, 240), range=histrange)
-                if clip_value is not None:
-                    integrated_img = np.clip(
-                        (img_on-img_off), -clip_value, clip_value)
-                else:
-                    integrated_img = (img_on-img_off)
-                img = integrated_img+clip_value
-
-            frame_data = frames[0] if frames.shape[0] != 0 else None
-            if img is not None:
-                event_data = (img/float(clip_value*2)*128).astype(np.uint8)
-            else:
-                event_data = None
-
             if break_idx % break_time == 0:
+                (pol_events, num_pol_event,
+                 special_events, num_special_event,
+                 frames_ts, frames, imu_events,
+                 num_imu_event) = data
+
+                print ("Number of events:", num_pol_event, "Number of Frames:",
+                       frames.shape, "Exposure:",
+                       device.get_config(
+                           libcaer.DAVIS_CONFIG_APS,
+                           libcaer.DAVIS_CONFIG_APS_EXPOSURE))
+
+                img = None
+                if num_pol_event != 0:
+                    pol_on = (pol_events[:, 3] == 1)
+                    pol_off = np.logical_not(pol_on)
+                    img_on, _, _ = np.histogram2d(
+                            pol_events[pol_on, 2], pol_events[pol_on, 1],
+                            bins=(180, 240), range=histrange)
+                    img_off, _, _ = np.histogram2d(
+                            pol_events[pol_off, 2], pol_events[pol_off, 1],
+                            bins=(180, 240), range=histrange)
+                    if clip_value is not None:
+                        integrated_img = np.clip(
+                            (img_on-img_off), -clip_value, clip_value)
+                    else:
+                        integrated_img = (img_on-img_off)
+                    img = integrated_img+clip_value
+
+                frame_data = frames[0] if frames.shape[0] != 0 else None
+                if img is not None:
+                    event_data = (img/float(clip_value*2)*128).astype(np.uint8)
+                else:
+                    event_data = None
+
                 data = zlib.compress(pickle.dumps([None, event_data]))
                 data_publisher.sendto(data, address)
                 break_time = 1
