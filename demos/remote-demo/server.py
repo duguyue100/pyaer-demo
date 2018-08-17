@@ -18,7 +18,7 @@ import numpy as np
 from pyaer import libcaer
 from pyaer.davis import DAVIS
 
-device = DAVIS(noise_filter=True)
+device = DAVIS(noise_filter=False)
 
 print ("Device ID:", device.device_id)
 if device.device_is_master:
