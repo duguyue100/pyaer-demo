@@ -16,7 +16,7 @@ import cv2
 
 buffer_size = 2**17
 
-IP_address = "172.19.12.141"
+IP_address = "172.19.11.92"
 port = 8080
 address = (IP_address, port)
 data_receiver = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
