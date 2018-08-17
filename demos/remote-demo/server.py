@@ -60,11 +60,7 @@ def get_event(device):
 
 while True:
     try:
-        if break_idx % break_time == 0:
-            data = get_event(device)
-        else:
-            break_idx += 1
-            data = None
+        data = get_event(device)
 
         if data is not None:
             (pol_events, num_pol_event,
@@ -101,8 +97,12 @@ while True:
             else:
                 event_data = None
 
-            data = zlib.compress(pickle.dumps([frame_data, event_data]))
-            data_publisher.sendto(data, address)
+            if break_idx % break_time == 0:
+                data = zlib.compress(pickle.dumps([frame_data, event_data]))
+                data_publisher.sendto(data, address)
+                break_time = 1
+            else:
+                break_idx += 1
 
             del data
         else:
