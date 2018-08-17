@@ -25,7 +25,8 @@ data_receiver.bind(address)
 while True:
     try:
         data, address = data_receiver.recvfrom(buffer_size)
-        frame_data, event_data = pickle.loads(zlib.decompress(data))
+        frame_data, event_data = pickle.loads(zlib.decompress(data),
+                                              encoding='latin1')
 
         if frame_data is not None:
             cv2.imshow("frame", frame_data)
