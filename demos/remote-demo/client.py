@@ -16,7 +16,7 @@ import cv2
 
 buffer_size = 2**17
 
-IP_address = "172.19.11.92"
+IP_address = "172.19.11.178"
 port = 8080
 address = (IP_address, port)
 data_receiver = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -25,8 +25,7 @@ data_receiver.bind(address)
 while True:
     try:
         data, address = data_receiver.recvfrom(buffer_size)
-        frame_data, event_data = pickle.loads(zlib.decompress(data),
-                                              encoding='latin1')
+        frame_data, event_data = pickle.loads(zlib.decompress(data))
 
         if frame_data is not None:
             cv2.imshow("frame", frame_data)

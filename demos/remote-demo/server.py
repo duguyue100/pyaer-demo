@@ -43,7 +43,10 @@ device.set_bias_from_json("./davis240c_config.json")
 clip_value = 3
 histrange = [(0, v) for v in (180, 240)]
 
-IP_address = "172.19.11.92"
+break_idx = 0
+break_time = 15
+
+IP_address = "172.19.11.178"
 port = 8080
 address = (IP_address, port)
 data_publisher = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -57,7 +60,12 @@ def get_event(device):
 
 while True:
     try:
-        data = get_event(device)
+        if break_idx % break_time == 0:
+            data = get_event(device)
+        else:
+            break_idx += 1
+            data = None
+
         if data is not None:
             (pol_events, num_pol_event,
              special_events, num_special_event,
