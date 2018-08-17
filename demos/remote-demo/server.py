@@ -98,7 +98,7 @@ while True:
                 event_data = None
 
             if break_idx % break_time == 0:
-                data = zlib.compress(pickle.dumps([frame_data, event_data]))
+                data = zlib.compress(pickle.dumps([None, event_data]))
                 data_publisher.sendto(data, address)
                 break_time = 1
             else:
