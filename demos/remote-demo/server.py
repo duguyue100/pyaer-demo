@@ -43,7 +43,7 @@ device.set_bias_from_json("./davis240c_config.json")
 clip_value = 3
 histrange = [(0, v) for v in (180, 240)]
 
-IP_address = "localhost"
+IP_address = "172.19.12.141"
 port = 8080
 address = (IP_address, port)
 data_publisher = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
