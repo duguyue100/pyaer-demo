@@ -44,7 +44,7 @@ clip_value = 3
 histrange = [(0, v) for v in (180, 240)]
 
 break_idx = 0
-break_time = 15
+break_time = 30
 
 IP_address = "172.19.11.178"
 port = 8080
