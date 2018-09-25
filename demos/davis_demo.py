@@ -5,23 +5,21 @@ Email : duguyue100@gmail.com
 """
 from __future__ import print_function
 
-from keras.models import load_model
 import threading
 
 import numpy as np
-from skimage.transform import resize
 from glumpy import app, gloo, gl
 
-from pyaer.dvs128 import DVS128
+from pyaer.davis import DAVIS
 
 
 # Load Keras Model
-model = load_model(filepath="./res/roshambo_model_and_weights.hdf5")
+#  model = load_model(filepath="./res/roshambo_model_and_weights.hdf5")
 
-model.summary()
+#  model.summary()
 
 # open DVS model
-device = DVS128()
+device = DAVIS()
 
 print ("Device ID:", device.device_id)
 if device.device_is_master:
@@ -40,8 +38,7 @@ data_stream = False
 
 lock = threading.Lock()
 
-clip_value = 4
-histrange = [(0, v) for v in (128, 128)]
+clip_value = None
 
 vertex = """
     attribute vec2 position;
@@ -63,10 +60,10 @@ fragment = """
     }
 """
 
-window = app.Window(width=1024, height=1024, aspect=1, title="RoShamBo")
+window = app.Window(width=1024, height=768, aspect=1, title="DAVIS Demo")
 
 img_array = (np.random.uniform(
-    0, 1, (128, 128, 3))*250).astype(np.uint8)
+    0, 1, (180, 240, 3))*250).astype(np.uint8)
 
 symbol_list = ["paper", "scissors", "rock", "no sign"]
 robot_list = ["scissors", "rock", "paper", "no sign"]
@@ -85,51 +82,42 @@ def on_close():
 
 @window.event
 def on_draw(dt):
-    global data_stream, device, event_list, break_idx, break_time
+    global img_array, data_stream, device
     window.clear()
 
     if data_stream is False:
         device.start_data_stream()
         # setting bias after data stream
-        device.set_bias_from_json("./configs/dvs128_config.json")
+        device.set_bias_from_json("./configs/davis240c_config.json")
         data_stream = True
 
     lock.acquire()
+
     (pol_events, num_pol_event,
-     special_events, num_special_event) = \
-        device.get_event()
+     special_events, num_special_event,
+     frames_ts, frames, imu_events,
+     num_imu_event) = device.get_event("events_hist")
 
-    if num_pol_event != 0:
-        pol_on = (pol_events[:, 3] == 1)
-        pol_off = np.logical_not(pol_on)
-        img_on, _, _ = np.histogram2d(
-                pol_events[pol_on, 2], pol_events[pol_on, 1],
-                bins=(128, 128), range=histrange)
-        img_off, _, _ = np.histogram2d(
-                pol_events[pol_off, 2], pol_events[pol_off, 1],
-                bins=(128, 128), range=histrange)
-        if clip_value is not None:
-            integrated_img = np.clip(
-                (img_on-img_off), -clip_value, clip_value)
-        else:
-            integrated_img = (img_on-img_off)
-        if break_idx % break_time == 0:
-            predict_array = resize(
-                integrated_img, (64, 64))[np.newaxis, :, :, np.newaxis]
-            prediction = model.predict(predict_array)
-            print ("\033[93mYou:\033[0m", symbol_list[np.argmax(prediction)],
-                   "\t",
-                   "\033[92mMe:\033[0m", robot_list[np.argmax(prediction)])
-            break_idx = 1
-        else:
-            break_idx += 1
+    if frames.shape[0] != 0:
+        img_array[..., 0] = frames[0]
+        img_array[..., 1] = frames[0]
+        img_array[..., 2] = frames[0]
+        if num_pol_event != 0:
+            img_array = img_array.astype(np.int16)
 
-        img_array = ((integrated_img+clip_value)/float(
-            clip_value*2)*255).astype(np.uint8)
-        img_array = img_array[..., np.newaxis].repeat(3, axis=2)
+            event_img_pos = (pol_events[..., 1] > 0).astype(np.int16)*255
+            event_img_pos = event_img_pos[..., np.newaxis].repeat(3, axis=2)
+            event_img_pos[..., 1:] *= -1
+
+            event_img_neg = (pol_events[..., 0] > 0).astype(np.int16)*255
+            event_img_neg = event_img_neg[..., np.newaxis].repeat(3, axis=2)
+            event_img_neg[..., :-1] *= -1
+
+            img_array += event_img_pos
+            img_array += event_img_neg
+            img_array = np.clip(img_array, 0, 255).astype(np.uint8)
     else:
-        img_array = (np.random.uniform(
-            0, 1, (128, 128, 3))*250).astype(np.uint8)
+        pass
 
     quad["texture"] = img_array
     quad.draw(gl.GL_TRIANGLE_STRIP)
