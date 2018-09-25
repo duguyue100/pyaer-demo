@@ -60,7 +60,7 @@ fragment = """
     }
 """
 
-window = app.Window(width=1024, height=768, aspect=1, title="DAVIS Demo")
+window = app.Window(width=2048, height=1536, aspect=1, title="DAVIS Demo")
 
 img_array = (np.random.uniform(
     0, 1, (180, 240, 3))*250).astype(np.uint8)
