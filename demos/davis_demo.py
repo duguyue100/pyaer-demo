@@ -116,8 +116,6 @@ def on_draw(dt):
             img_array += event_img_pos
             img_array += event_img_neg
             img_array = np.clip(img_array, 0, 255).astype(np.uint8)
-    else:
-        pass
 
     quad["texture"] = img_array
     quad.draw(gl.GL_TRIANGLE_STRIP)
