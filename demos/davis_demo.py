@@ -64,6 +64,7 @@ window = app.Window(width=1024, height=768, aspect=1, title="DAVIS Demo")
 
 img_array = (np.random.uniform(
     0, 1, (180, 240, 3))*250).astype(np.uint8)
+event_array = np.zeros((180, 240, 2), dtype=np.int64)
 
 symbol_list = ["paper", "scissors", "rock", "no sign"]
 robot_list = ["scissors", "rock", "paper", "no sign"]
@@ -82,7 +83,7 @@ def on_close():
 
 @window.event
 def on_draw(dt):
-    global img_array, data_stream, device
+    global img_array, event_array, data_stream, device
     window.clear()
 
     if data_stream is False:
@@ -102,20 +103,26 @@ def on_draw(dt):
         img_array[..., 0] = frames[0]
         img_array[..., 1] = frames[0]
         img_array[..., 2] = frames[0]
+
+        # On events
+        img_array = img_array.astype(np.int16)
+        event_img_pos = (event_array[..., 1] > 0).astype(np.int16)*-255
+        event_img_pos = event_img_pos[..., np.newaxis].repeat(3, axis=2)
+        event_img_pos[..., 0] *= -1
+
+        event_img_neg = (event_array[..., 0] > 0).astype(np.int16)*-255
+        event_img_neg = event_img_neg[..., np.newaxis].repeat(3, axis=2)
+        event_img_neg[..., 1] *= -1
+
+        img_array += event_img_pos
+        img_array += event_img_neg
+        img_array = np.clip(img_array, 0, 255).astype(np.uint8)
+
+        # clear event array
+        event_array = np.zeros((180, 240, 2), dtype=np.int64)
+    else:
         if num_pol_event != 0:
-            img_array = img_array.astype(np.int16)
-
-            event_img_pos = (pol_events[..., 1] > 0).astype(np.int16)*255
-            event_img_pos = event_img_pos[..., np.newaxis].repeat(3, axis=2)
-            event_img_pos[..., 1:] *= -1
-
-            event_img_neg = (pol_events[..., 0] > 0).astype(np.int16)*255
-            event_img_neg = event_img_neg[..., np.newaxis].repeat(3, axis=2)
-            event_img_neg[..., :-1] *= -1
-
-            img_array += event_img_pos
-            img_array += event_img_neg
-            img_array = np.clip(img_array, 0, 255).astype(np.uint8)
+            event_array += pol_events
 
     quad["texture"] = img_array
     quad.draw(gl.GL_TRIANGLE_STRIP)
