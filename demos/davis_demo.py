@@ -109,6 +109,7 @@ def on_draw(dt):
         event_img_pos = (event_array[..., 1] > 0).astype(np.int16)*-255
         event_img_pos = event_img_pos[..., np.newaxis].repeat(3, axis=2)
         event_img_pos[..., 0] *= -1
+        event_img_pos[..., 1] *= 2
 
         event_img_neg = (event_array[..., 0] > 0).astype(np.int16)*-255
         event_img_neg = event_img_neg[..., np.newaxis].repeat(3, axis=2)
