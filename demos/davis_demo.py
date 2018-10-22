@@ -97,7 +97,7 @@ def on_draw(dt):
     (pol_events, num_pol_event,
      special_events, num_special_event,
      frames_ts, frames, imu_events,
-     num_imu_event) = device.get_event("events_hist")
+     num_imu_event) = device.get_event("counter_neuron")
 
     if frames.shape[0] != 0:
         img_array[..., 0] = frames[0]
@@ -109,11 +109,12 @@ def on_draw(dt):
         event_img_pos = (event_array[..., 1] > 0).astype(np.int16)*-255
         event_img_pos = event_img_pos[..., np.newaxis].repeat(3, axis=2)
         event_img_pos[..., 0] *= -1
-        event_img_pos[..., 1] *= 2
+        #  event_img_pos[..., 1] *= 2
 
         event_img_neg = (event_array[..., 0] > 0).astype(np.int16)*-255
         event_img_neg = event_img_neg[..., np.newaxis].repeat(3, axis=2)
         event_img_neg[..., 1] *= -1
+        event_img_neg[..., 0] *= 2
 
         img_array += event_img_pos
         img_array += event_img_neg
