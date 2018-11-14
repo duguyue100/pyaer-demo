@@ -21,18 +21,18 @@ from pyaer.davis import DAVIS
 # open DVS model
 device = DAVIS()
 
-print ("Device ID:", device.device_id)
+print("Device ID:", device.device_id)
 if device.device_is_master:
-    print ("Device is master.")
+    print("Device is master.")
 else:
-    print ("Device is slave.")
-print ("Device Serial Number:", device.device_serial_number)
-print ("Device String:", device.device_string)
-print ("Device USB bus Number:", device.device_usb_bus_number)
-print ("Device USB device address:", device.device_usb_device_address)
-print ("Device size X:", device.dvs_size_X)
-print ("Device size Y:", device.dvs_size_Y)
-print ("Logic Version:", device.logic_version)
+    print("Device is slave.")
+print("Device Serial Number:", device.device_serial_number)
+print("Device String:", device.device_string)
+print("Device USB bus Number:", device.device_usb_bus_number)
+print("Device USB device address:", device.device_usb_device_address)
+print("Device size X:", device.dvs_size_X)
+print("Device size Y:", device.dvs_size_Y)
+print("Logic Version:", device.logic_version)
 
 data_stream = False
 
@@ -76,7 +76,7 @@ break_idx = 1
 def on_close():
     global device
 
-    print ("Shutting down the device")
+    print("Shutting down the device")
     device.shutdown()
     del device
 
@@ -97,7 +97,7 @@ def on_draw(dt):
     (pol_events, num_pol_event,
      special_events, num_special_event,
      frames_ts, frames, imu_events,
-     num_imu_event) = device.get_event("counter_neuron")
+     num_imu_event) = device.get_event("events_hist")
 
     if frames.shape[0] != 0:
         img_array[..., 0] = frames[0]
