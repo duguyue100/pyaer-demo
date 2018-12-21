@@ -99,7 +99,7 @@ def on_draw(dt):
     if data_stream is False:
         device.start_data_stream()
         # setting bias after data stream
-        device.set_bias_from_json("./configs/davis346_config.json")
+        #  device.set_bias_from_json("./configs/davis346_config.json")
         data_stream = True
 
     lock.acquire()
