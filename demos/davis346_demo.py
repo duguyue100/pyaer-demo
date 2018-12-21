@@ -70,6 +70,16 @@ symbol_list = ["paper", "scissors", "rock", "no sign"]
 robot_list = ["scissors", "rock", "paper", "no sign"]
 break_time = 15
 break_idx = 1
+fs = 1
+
+
+@window.event
+def on_key_press(key, modifiers):
+    global fs
+    if key == app.window.key.UP:
+        fs = fs+1 if fs < 255 else 255
+    elif key == app.window.key.DOWN:
+        fs = fs-1 if fs > 1 else 1
 
 
 @window.event
@@ -83,7 +93,7 @@ def on_close():
 
 @window.event
 def on_draw(dt):
-    global img_array, event_array, data_stream, device
+    global img_array, event_array, data_stream, device, fs
     window.clear()
 
     if data_stream is False:
@@ -106,12 +116,16 @@ def on_draw(dt):
 
         # On events
         img_array = img_array.astype(np.int16)
-        event_img_pos = (event_array[..., 1] > 0).astype(np.int16)*-255
+        event_img_pos = event_array[..., 1]
+        event_img_pos[event_img_pos > fs] = fs
+        event_img_pos = event_img_pos*(-255//fs)
         event_img_pos = event_img_pos[..., np.newaxis].repeat(3, axis=2)
         event_img_pos[..., 0] *= -1
         #  event_img_pos[..., 1] *= 2
 
-        event_img_neg = (event_array[..., 0] > 0).astype(np.int16)*-255
+        event_img_neg = event_array[..., 0]
+        event_img_neg[event_img_neg > fs] = fs
+        event_img_neg = event_img_neg*(-255//fs)
         event_img_neg = event_img_neg[..., np.newaxis].repeat(3, axis=2)
         event_img_neg[..., 1] *= -1
         event_img_neg[..., 0] *= 2
