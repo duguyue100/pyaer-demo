@@ -65,21 +65,25 @@ window = app.Window(width=2048, height=1539, aspect=1, title="DAVIS Demo")
 img_array = (np.random.uniform(
     0, 1, (260, 346, 3))*250).astype(np.uint8)
 event_array = np.zeros((260, 346, 2), dtype=np.int64)
+black_frame = np.zeros((260, 346, 3), dtype=np.int8)
 
 symbol_list = ["paper", "scissors", "rock", "no sign"]
 robot_list = ["scissors", "rock", "paper", "no sign"]
 break_time = 15
 break_idx = 1
 fs = 1
+display_frame = True
 
 
 @window.event
 def on_key_press(key, modifiers):
-    global fs
+    global fs, display_frame
     if key == app.window.key.UP:
         fs = fs+1 if fs < 255 else 255
     elif key == app.window.key.DOWN:
         fs = fs-1 if fs > 1 else 1
+    elif key == app.window.key.SPACE:
+        display_frame = False if display_frame is True else True
 
 
 @window.event
@@ -93,7 +97,8 @@ def on_close():
 
 @window.event
 def on_draw(dt):
-    global img_array, event_array, data_stream, device, fs
+    global img_array, event_array, data_stream, device, fs, display_frame, \
+        black_frame
     window.clear()
 
     if data_stream is False:
@@ -110,9 +115,12 @@ def on_draw(dt):
      num_imu_event) = device.get_event("events_hist")
 
     if frames.shape[0] != 0:
-        img_array[..., 0] = frames[0]
-        img_array[..., 1] = frames[0]
-        img_array[..., 2] = frames[0]
+        if display_frame is True:
+            img_array[..., 0] = frames[0]
+            img_array[..., 1] = frames[0]
+            img_array[..., 2] = frames[0]
+        else:
+            img_array = black_frame
 
         # On events
         img_array = img_array.astype(np.int16)
