@@ -68,7 +68,7 @@ fragment = """
     }
 """
 
-WINDOW_WIDTH = 2048
+WINDOW_WIDTH = 1024
 WINDOW_HEIGHT = int(WINDOW_WIDTH*(HEIGHT/WIDTH))
 
 window = app.Window(width=WINDOW_WIDTH, height=WINDOW_HEIGHT,
@@ -80,8 +80,8 @@ event_array = np.zeros((HEIGHT, WIDTH, 2), dtype=np.int64)
 
 # for calibration
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
-GRID_X = 7
-GRID_Y = 6
+GRID_X = 9
+GRID_Y = 7
 obj_p = np.zeros((GRID_X*GRID_Y, 3), np.float32)
 obj_p[:, :2] = np.mgrid[0:GRID_X, 0:GRID_Y].T.reshape(-1, 2)
 
