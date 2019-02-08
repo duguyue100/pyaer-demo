@@ -10,6 +10,7 @@ import threading
 import numpy as np
 from glumpy import app, gloo, gl
 
+from pyaer import libcaer
 from pyaer.davis import DAVIS
 
 
@@ -104,7 +105,7 @@ def on_draw(dt):
     if data_stream is False:
         device.start_data_stream()
         # setting bias after data stream
-        #  device.set_bias_from_json("./configs/davis346_config.json")
+        device.set_bias_from_json("./configs/davis346_config.json")
         data_stream = True
 
     lock.acquire()
@@ -114,11 +115,18 @@ def on_draw(dt):
      frames_ts, frames, imu_events,
      num_imu_event) = device.get_event("events_hist")
 
+    print("Exposure:", device.get_config(
+          libcaer.DAVIS_CONFIG_APS,
+          libcaer.DAVIS_CONFIG_APS_EXPOSURE))
+
     if frames.shape[0] != 0:
         if display_frame is True:
-            img_array[..., 0] = frames[0]
-            img_array[..., 1] = frames[0]
-            img_array[..., 2] = frames[0]
+            if device.aps_color_filter == 0:
+                img_array[..., 0] = frames[0]
+                img_array[..., 1] = frames[0]
+                img_array[..., 2] = frames[0]
+            else:
+                img_array = frames[0]
         else:
             img_array = black_frame
 
