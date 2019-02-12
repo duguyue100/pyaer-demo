@@ -115,9 +115,9 @@ def on_draw(dt):
      frames_ts, frames, imu_events,
      num_imu_event) = device.get_event("events_hist")
 
-    print("Exposure:", device.get_config(
-          libcaer.DAVIS_CONFIG_APS,
-          libcaer.DAVIS_CONFIG_APS_EXPOSURE))
+    #  print("Exposure:", device.get_config(
+    #        libcaer.DAVIS_CONFIG_APS,
+    #        libcaer.DAVIS_CONFIG_APS_EXPOSURE))
 
     if frames.shape[0] != 0:
         if display_frame is True:
