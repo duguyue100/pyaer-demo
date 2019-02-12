@@ -74,17 +74,20 @@ break_time = 15
 break_idx = 1
 fs = 1
 display_frame = True
+display_event = True
 
 
 @window.event
 def on_key_press(key, modifiers):
-    global fs, display_frame
+    global fs, display_frame, display_event
     if key == app.window.key.UP:
         fs = fs+1 if fs < 255 else 255
     elif key == app.window.key.DOWN:
         fs = fs-1 if fs > 1 else 1
-    elif key == app.window.key.SPACE:
+    elif key == app.window.key.F11:
         display_frame = False if display_frame is True else True
+    elif key == app.window.key.F12:
+        display_event = False if display_event is True else True
 
 
 @window.event
@@ -99,7 +102,7 @@ def on_close():
 @window.event
 def on_draw(dt):
     global img_array, event_array, data_stream, device, fs, display_frame, \
-        black_frame
+        black_frame, display_event
     window.clear()
 
     if data_stream is False:
@@ -115,10 +118,6 @@ def on_draw(dt):
      frames_ts, frames, imu_events,
      num_imu_event) = device.get_event("events_hist")
 
-    #  print("Exposure:", device.get_config(
-    #        libcaer.DAVIS_CONFIG_APS,
-    #        libcaer.DAVIS_CONFIG_APS_EXPOSURE))
-
     if frames.shape[0] != 0:
         if display_frame is True:
             if device.aps_color_filter == 0:
@@ -130,28 +129,29 @@ def on_draw(dt):
         else:
             img_array = black_frame
 
-        # On events
-        img_array = img_array.astype(np.int16)
-        event_img_pos = event_array[..., 1]
-        event_img_pos[event_img_pos > fs] = fs
-        event_img_pos = event_img_pos*(-255//fs)
-        event_img_pos = event_img_pos[..., np.newaxis].repeat(3, axis=2)
-        event_img_pos[..., 0] *= -1
-        #  event_img_pos[..., 1] *= 2
+        if display_event is True:
+            # On events
+            img_array = img_array.astype(np.int16)
+            event_img_pos = event_array[..., 1]
+            event_img_pos[event_img_pos > fs] = fs
+            event_img_pos = event_img_pos*(-255//fs)
+            event_img_pos = event_img_pos[..., np.newaxis].repeat(3, axis=2)
+            event_img_pos[..., 0] *= -1
+            #  event_img_pos[..., 1] *= 2
 
-        event_img_neg = event_array[..., 0]
-        event_img_neg[event_img_neg > fs] = fs
-        event_img_neg = event_img_neg*(-255//fs)
-        event_img_neg = event_img_neg[..., np.newaxis].repeat(3, axis=2)
-        event_img_neg[..., 1] *= -1
-        event_img_neg[..., 0] *= 2
+            event_img_neg = event_array[..., 0]
+            event_img_neg[event_img_neg > fs] = fs
+            event_img_neg = event_img_neg*(-255//fs)
+            event_img_neg = event_img_neg[..., np.newaxis].repeat(3, axis=2)
+            event_img_neg[..., 1] *= -1
+            event_img_neg[..., 0] *= 2
 
-        img_array += event_img_pos
-        img_array += event_img_neg
-        img_array = np.clip(img_array, 0, 255).astype(np.uint8)
+            img_array += event_img_pos
+            img_array += event_img_neg
+            img_array = np.clip(img_array, 0, 255).astype(np.uint8)
 
-        # clear event array
-        event_array = np.zeros((260, 346, 2), dtype=np.int64)
+            # clear event array
+            event_array = np.zeros((260, 346, 2), dtype=np.int64)
     else:
         if num_pol_event != 0:
             event_array += pol_events
