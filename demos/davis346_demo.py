@@ -84,7 +84,7 @@ def on_key_press(key, modifiers):
         fs = fs+1 if fs < 255 else 255
     elif key == app.window.key.DOWN:
         fs = fs-1 if fs > 1 else 1
-    elif key == app.window.key.F11:
+    elif key == app.window.key.F10:
         display_frame = False if display_frame is True else True
     elif key == app.window.key.F12:
         display_event = False if display_event is True else True
