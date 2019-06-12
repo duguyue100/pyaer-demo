@@ -80,8 +80,8 @@ event_array = np.zeros((HEIGHT, WIDTH, 2), dtype=np.int64)
 
 # for calibration
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
-GRID_X = 9
-GRID_Y = 7
+GRID_X = 5
+GRID_Y = 4
 obj_p = np.zeros((GRID_X*GRID_Y, 3), np.float32)
 obj_p[:, :2] = np.mgrid[0:GRID_X, 0:GRID_Y].T.reshape(-1, 2)
 
