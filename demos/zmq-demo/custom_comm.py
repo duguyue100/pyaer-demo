@@ -7,6 +7,11 @@ Email : yuhuang.hu@ini.uzh.ch
 from __future__ import print_function, absolute_import
 
 import time
+import json
+import numpy as np
+import cv2
+
+from pyaer import libcaer
 from pyaer.comm import EventPublisher, EventSubscriber
 
 
@@ -18,14 +23,20 @@ class CustomPublisher(EventPublisher):
     def send_data(self):
         while True:
             try:
-                t = time.localtime()
-                curr_time = time.strftime("%H:%M:%S", t)
-                msg = "hello, a custom data {}".format(curr_time)
-                self.socket.send_multipart(
-                    [self.topic, bytes(msg, "utf-8")])
+                data = self.device.get_event()
 
-                print("Publishing {}".format(msg))
+                if data is not None:
+                    data = self.pack_data(data)
+
+                    self.socket.send_multipart(data)
+
+                    t = time.localtime()
+
+                    curr_time = time.strftime("%H:%M:%S", t)
+
+                    print("Publishing {}".format(curr_time))
             except KeyboardInterrupt:
+                self.close()
                 break
 
 
@@ -40,6 +51,15 @@ class CustomSubscriber(EventSubscriber):
         Reimplement to your need.
         """
         while True:
-            topic, data = self.socket.recv_multipart()
+            data = self.socket.recv_multipart()
+            data = self.unpack_data(data)
 
-            print("Received data: {}".format(data))
+            if data[4] is not None:
+                if data[4].shape[0] != 0:
+                    cv2.imshow("frame", data[4][0])
+
+                    if cv2.waitKey(1) & 0xFF == ord('q'):
+                        break
+
+                print("Received events: {}, {}".format(
+                        data[1].shape, data[4].shape))
