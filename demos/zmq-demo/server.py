@@ -6,19 +6,34 @@ Email : duguyue100@gmail.com
 
 from __future__ import print_function, absolute_import
 
-import time
-import zmq
+import argparse
 from random import randrange
 
-# create a context
-context = zmq.Context()
-socket = context.socket(zmq.PUB)
-socket.bind("tcp://*:5556")
+from pyaer.utils import expandpath, import_custom_module
+from pyaer.comm import EventPublisher
 
-# control loop
-while True:
-    zipcode = randrange(1, 100000)
-    temperature = randrange(-80, 135)
-    relhumidity = randrange(10, 60)
 
-    socket.send_string("%i %i %i" % (zipcode, temperature, relhumidity))
+parser = argparse.ArgumentParser()
+parser.add_argument("--custom_pub", type=expandpath,
+                    default="",
+                    help="path to the custom publisher class")
+parser.add_argument("--custom_class", type=str,
+                    default="",
+                    help="custom publisher class name")
+
+
+args = parser.parse_args()
+
+# define publisher
+if args.custom_pub == "":
+    # fall back to the default publisher
+    publisher = EventPublisher(device=None, port=5556)
+    print("Use default publisher")
+else:
+    # use custom publisher
+    print("Use custom publisher {}".format(args.custom_class))
+    CustomPublisher = import_custom_module(args.custom_pub, args.custom_class)
+    publisher = CustomPublisher(device=None, port=5556)
+
+# Start sending data
+publisher.send_data()

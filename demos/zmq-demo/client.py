@@ -6,26 +6,32 @@ Email : duguyue100@gmail.com
 
 from __future__ import print_function, absolute_import
 
-import zmq
+import argparse
 
-context = zmq.Context()
+from pyaer.utils import expandpath, import_custom_module
+from pyaer.comm import EventSubscriber
 
-print("Connecting to hello world server ...")
-socket = context.socket(zmq.SUB)
+parser = argparse.ArgumentParser()
+parser.add_argument("--custom_sub", type=expandpath,
+                    default="",
+                    help="path to the custom publisher class")
+parser.add_argument("--custom_class", type=str,
+                    default="",
+                    help="custom publisher class name")
 
-socket.connect("tcp://localhost:5556")
 
-zip_filter = "10001"
+args = parser.parse_args()
 
-socket.setsockopt_string(zmq.SUBSCRIBE, zip_filter)
+# define publisher
+if args.custom_sub == "":
+    # fall back to the default publisher
+    subscriber = EventSubscriber(port=5556)
+    print("Use default subscriber")
+else:
+    # use custom publisher
+    print("Use custom subscriber {}".format(args.custom_class))
+    CustomSubscriber = import_custom_module(args.custom_sub, args.custom_class)
+    subscriber = CustomSubscriber(port=5556)
 
-total_temp = 0
-for update_nbr in range(20):
-    string = socket.recv_string()
-    zipcode, tempature, relhuminity = string.split()
-    print(update_nbr)
-
-    total_temp += int(tempature)
-
-print("Average temperature for zipcode '%s' was %dF" % (
-    zip_filter, total_temp / (update_nbr + 1)))
+# Start sending data
+subscriber.recv_data()
