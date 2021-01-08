@@ -164,4 +164,4 @@ quad = gloo.Program(vertex, fragment, count=4)
 quad['position'] = [(-1, -1), (-1, +1), (+1, -1), (+1, +1)]
 quad['texcoord'] = [(0, 1), (0, 0), (1, 1), (1, 0)]
 quad['texture'] = img_array
-app.run(framerate=400)
+app.run(framerate=150)
