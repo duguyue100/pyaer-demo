@@ -1,0 +1,38 @@
+"Hub":
+    "use_default": true
+
+"Subscriber-viewer":
+    "use_default": true
+    "url": "tcp://127.0.0.1"
+    "port": 5099
+    # "topic": "event_frames/dvs_frame"
+    "topic": "dvxplorer_1/polarity_events"
+    "name": "dvx_viewer"
+    "use_default_sub": false
+    "custom_sub": "./dvxplorer_viewer.py"
+    "custom_class": "DVXViewer"
+
+# "PubSuber-framer":
+#     "use_default": true
+#     "url": "tcp://127.0.0.1"
+#     "pub_port": 5100
+#     "pub_topic": "event_frames"
+#     "pub_name": "dvx_framer_pub"
+#     "sub_port": 5099
+#     "sub_topic": "dvxplorer_1/polarity_events"
+#     "sub_name": "dvx_framer_sub"
+#     "custom_pubsuber": "./dvxplorer_framer.py"
+#     "custom_class": "DVXFramer"
+
+"Publisher-dvxplorer":
+    "use_default": true
+    "url": "tcp://127.0.0.1"
+    "port": 5100
+    "master_topic": "dvxplorer_1"
+    "use_default_pub": false
+    "custom_pub": "./dvxplorer_pub.py"
+    "custom_class": "DVXPublisher"
+    "device": "DVXPLORER"
+    "noise_filter": true
+    "bias_file": "./configs/dvxplorer_config.json"
+    "name": "dvxplorer_publisher"
