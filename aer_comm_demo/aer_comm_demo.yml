@@ -6,7 +6,9 @@
     "url": "tcp://127.0.0.1"
     "port": 5099
     "topic": "event_frames/dvs_frame"
-    # "topic": "dvxplorer_1/polarity_events"
+    # "topic": "dvxplorer_1/polarity_events"  # subscribe to polarity events
+    # "topic": "dvxplorer_1/frame_events"  # subscribe to frames
+    # "topic": "" # subscribe to everything
     "name": "dvx_viewer"
     "use_default_sub": false
     "custom_sub": "./dvxplorer_viewer.py"
