@@ -53,7 +53,7 @@ class DVXViewer(Subscriber):
             }
         """
 
-        window = app.Window(width=640, height=480, aspect=1,
+        window = app.Window(width=1280, height=960, aspect=1,
                             title="DVXplorer Demo")
 
         img_array = (np.random.uniform(
@@ -72,9 +72,9 @@ class DVXViewer(Subscriber):
             #  if frames.shape[0] != 0:
             if dvs_frame is not None:
 
-                dvs_frame = dvs_frame[..., 1]-dvs_frame[..., 0]
-                dvs_frame = np.clip(dvs_frame, -3, 3)
-                dvs_frame = ((dvs_frame+3)*42.5).astype(np.uint8)
+                #  dvs_frame = dvs_frame[..., 1]-dvs_frame[..., 0]
+                #  dvs_frame = np.clip(dvs_frame, -3, 3)
+                #  dvs_frame = ((dvs_frame+3)*42.5).astype(np.uint8)
 
                 img_array = black_frame
 

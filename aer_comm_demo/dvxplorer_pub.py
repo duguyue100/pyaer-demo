@@ -22,6 +22,7 @@ class DVXPublisher(AERPublisher):
         while True:
             try:
                 data = self.device.get_event("events_hist")
+                #  data = self.device.get_event()
                 timestamp = get_nanotime()
                 if data is not None:
                     # send polarity events

@@ -88,6 +88,10 @@ class DVXFramer(PubSuber):
                     s_time = time()
                     dvs_frame = dvs_hist_framer(polarity_events)
 
+                    #  dvs_frame = dvs_framer(
+                    #      polarity_events, self.histrange,
+                    #      self.height, self.width)
+
                     sum_time += time()-s_time
                     n_round += 1
 
