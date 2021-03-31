@@ -22,9 +22,9 @@ gray_frame = np.ones((480, 640, 3), dtype=np.uint8)*128
 
 
 class DVXViewer(Subscriber):
-    def __init__(self, url, port, topic, name):
+    def __init__(self, url, port, topic, name, **kwargs):
         super(DVXViewer, self).__init__(
-            url=url, port=port, topic=topic, name=name)
+            url=url, port=port, topic=topic, name=name, **kwargs)
 
     def run(self):
         #  sum_time = 0

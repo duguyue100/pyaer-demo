@@ -52,18 +52,18 @@ def dvs_framer(events, histrange, height, width):
 
 class DVXFramer(PubSuber):
     def __init__(self, url, pub_port, pub_topic, pub_name,
-                 sub_port, sub_topic, sub_name):
+                 sub_port, sub_topic, sub_name, **kwargs):
         super(DVXFramer, self).__init__(
             url=url, pub_port=pub_port, pub_topic=pub_topic,
             pub_name=pub_name, sub_port=sub_port,
-            sub_topic=sub_topic, sub_name=sub_name)
+            sub_topic=sub_topic, sub_name=sub_name, **kwargs)
 
         self.subscriber = AERSubscriber(url=self.url, port=self.sub_port,
                                         topic=self.sub_topic,
-                                        name=self.sub_name)
+                                        name=self.sub_name, **kwargs)
         self.publisher = Publisher(url=self.url, port=self.pub_port,
                                    master_topic=self.pub_topic,
-                                   name=self.pub_name)
+                                   name=self.pub_name, **kwargs)
 
         # define height and width of the frame
         self.height, self.width = 480, 640
@@ -107,3 +107,4 @@ class DVXFramer(PubSuber):
             except KeyboardInterrupt:
                 self.logger.info("Average Time: {}ms".format(
                     sum_time/n_round*1000))
+                break

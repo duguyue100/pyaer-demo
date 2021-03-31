@@ -12,11 +12,11 @@ from pyaer.comm import AERPublisher
 
 class DVXPublisher(AERPublisher):
     def __init__(self, device, url="tcp://127.0.0.1",
-                 port=5100, master_topic="", name=""):
+                 port=5100, master_topic="", name="", **kwargs):
         """DVXPublisher."""
         super(DVXPublisher, self).__init__(
             device=device, url=url, port=port, master_topic=master_topic,
-            name=name)
+            name=name, **kwargs)
 
     def run(self):
         while True:
