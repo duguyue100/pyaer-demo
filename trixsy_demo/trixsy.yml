@@ -1,0 +1,34 @@
+"Hub":
+    "use_default": true
+
+"Subscriber-viewer":
+    "topic": "event_frames/dvs_frame"
+    "name": "dvs_viewer"
+    "custom_sub": "./viewer.py/DVSViewer"
+
+"Subscriber-controller":
+    "topic": "net_outputs/control_cmd"
+    "name": "trixsy_controller"
+    "custom_sub": "./controller.py/Controller"
+
+"PubSuber-framer":
+    "pub_topic": "event_frames"
+    "pub_name": "dvs_framer_pub"
+    "sub_topic": "davis_1/polarity_events"
+    "sub_name": "dvs_framer_sub"
+    "custom_pubsuber": "./framer.py/DVSFramer"
+
+"PubSuber-inferencer":
+    "pub_topic": "net_outputs"
+    "pub_name": "net_inference_pub"
+    "sub_topic": "event_frames/dvs_frame"
+    "sub_name": "net_inference_sub"
+    "custom_pubsuber": "./inference.py/NetInferencer"
+
+"Publisher-davis":
+    "master_topic": "davis_1"
+    "custom_pub": "./event_publish.py/DVSPublisher"
+    "device": "DAVIS"
+    "noise_filter": true
+    "bias_file": "./configs/davis346_config.json"
+    "name": "davis_publisher"
